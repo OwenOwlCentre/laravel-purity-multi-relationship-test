@@ -97,7 +97,7 @@ class RelationFilterTest extends TestCase
     }
 
         /** @test */
-        public function it_can_filter_by_multiple_feilds_on_one_relation(): void
+        public function it_can_filter_by_multiple_feilds_on_one_relationship(): void
         {
             $product1 = Product::factory([
                 'name' => 'Laravel Purity',
