@@ -87,6 +87,7 @@ class RelationFilterTest extends TestCase
         $product->book()->create([
             'name'        => 'book',
             'description' => 'book for product',
+            'page_count'  => 100,
         ]);
 
         $response = $this->getJson('/products?filters[book][name][$eq]=book');
@@ -94,4 +95,42 @@ class RelationFilterTest extends TestCase
         $response->assertOk();
         $response->assertJsonCount(1);
     }
+
+        /** @test */
+        public function it_can_filter_by_multiple_feilds_on_one_relation(): void
+        {
+            $product1 = Product::factory([
+                'name' => 'Laravel Purity',
+            ])->create();
+
+            $product2 = Product::factory([
+                'name' => 'Laravel Purity',
+            ])->create();
+
+            //exact match, should return
+            $product1->book()->create([
+                'name'        => 'book',
+                'description' => 'book for product',
+                'page_count'  => 100,
+            ]);
+
+            //only matching name should not return
+            $product2->book()->create([
+                'name'        => 'book',
+                'description' => 'book for product',
+                'page_count'  => 200,
+            ]);
+
+            //only matching page_count should not return
+            $product2->book()->create([
+                'name'        => 'book2',
+                'description' => 'book2 for product2',
+                'page_count'  => 100,
+            ]);
+    
+            $response = $this->getJson('/products?filters[book][name][$eq]=book&filters[book][page_count][$eq]=100');
+    
+            $response->assertOk();
+            $response->assertJsonCount(1);
+        }
 }
